@@ -1,0 +1,100 @@
+/* MongoDB */
+
+// Conexión en consola
+mongo "mongodb+srv://cluster0.z9cv7.mongodb.net/myFirstDatabase" --username root (comando de mongo atlas)
+
+show dbs	        # Muestra las BD en el cluster
+show collections    # Muestra las collecciones
+use db_name	        # Debe tener una coleccion para materializarse
+
+// CRUD
+db.collection_name.insertOne(json_document)                     # Indice por defecto / Indice manual _id:x
+db.collection_name.insertMany()                                 # Recibe un arreglo de documentos
+db.collection_name.updateOne({filter}, {set: {key:'value'}})    # Update
+db.collection_name.deleteOne({filter})                          # Borra el 1 que encuentra según el orden natural
+db.collection_name.deleteMany({filter})                         # Borra todos los que coincidan
+db.collection_name.deleteMany({})                               # Borra todos los documentos
+
+// Consultas
+db.collection_name.find({key:"value"})
+db.collection_name.findOne()                    # Retorna por orden natural (se pueden agregar filtros)
+db.collection_name.findOne({_id: ObjectId('1')})
+
+// Operadores
+db.collection_name.find( { field: {operator1: value} }, ... )
+
+// Proyecciones: Se indican los campos que se desean extraer y los que no en otro filtro
+{ _id: 0, field1: 1, field2: 0, field3: 1 } 	# El _id viene por defecto en 1
+
+// Condicionales
+db.collection_name.find(cond1, cond2)           # AND
+
+// Operadores
+$eq 	=
+$gt	>
+$gte	>=
+$lt 	<
+$lte    <=
+$ne	!=
+$in	Valores dentro de un arreglo
+#nin	Valores que no estan dentro de un arreglo
+$and
+$not
+$nor
+$or
+$exist	Documentos que cuentan con un campo específico
+$type 	Documentos que cuentan con un campo de tipo específico
+
+// Operadores para arreglos
+$all
+$elemMatch	Para una query en los documentos dentro de un arreglo
+$size	
+$addToSet 	Añade un valor a un arreglo (sí aun no existe)
+{ $addToSet: { <field1>: <value1>, ... } }
+$pull 		Remueve los valores de un arreglo que cumplan una condicion
+{ $pull: { <field1>: <value|condition>, <field2>: <value|condition>, ... } }
+
+// Operadores especiales
+$search	Para búsquedas por texto
+
+// Agregacions
+db.collection_name.agregate([ {}, {}, {}... ])	# Cada {} es una etapa que se agrega a la consulta, por ejemplo:
+{ $match: (status: 'A') }, {$group: { _id: '$cust_id', total: ( $sum: '$amount') }}
+
+// Agregaciones de único propósito
+db.collection_name.estimatedDocumentCount()	# Optimizado para grandes cantidades de documentos
+db.collection_name.count()			# Cuenta los documentos dentro de una colección
+db.collection_name.distinct("field")	 	# Permite distinguir colecciones 
+
+// Tipos de Índice
+De un solo campo
+Compuestos
+Multi llave
+Geoespaciales
+De texto
+Hashed
+
+db.collection_name.getIndexes()		# Retorna los índices de la colección
+db.collection_name.createIndex({ nombre: "text" }) 	db.collection_name.find( { $text: {$search: "aws"} })
+
+// Adicionales
+.pretty()   # Formatea a Json en consola
+.count()    # Valida cuantos documentos retorna la consulta
+
+
+
+// Conceptos
+Atomicidad: Si no se ingresa 1 documento se hace rollback
+
+/* PyMongo */
+
+// Funciones
+dumps()     # Convierte de BSON a JSON
+
+// Conceptos clave
+- Los métodos no usan Camel Case, se separan por _ como es habitual en python (insert_one, update_one, delete_one, find_one)
+- Las consultas deben tener su clave y valor entre " "
+- Las búsquedas por id en PyMongo deben especificar que se trata de un ObjectId
+db.cursos.find_one({'_id': ObjectId(id_curso)}, proyeccion)
+
+
